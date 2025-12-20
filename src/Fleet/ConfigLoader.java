@@ -1,7 +1,6 @@
 package Fleet;
 
 import utils.Vec3;
-
 import java.util.Random;
 
 public class ConfigLoader {
@@ -13,6 +12,8 @@ public class ConfigLoader {
     private double velocityGainConst; // velocity gain constant
     private double commRange;
     private double packetLoss;
+    private double attitudeGain;
+    private double angularRateGain;
 
     private int numOfDrones;
 
@@ -37,6 +38,8 @@ public class ConfigLoader {
         velocityGainConst = rand.nextDouble(4 - 1) + 1; // 1.0 -> 4.0
         commRange = rand.nextDouble(25 - 5) + 5; // 5.0 -> 25.0
         packetLoss = 0.05;
+        angularRateGain = 0.15;
+        attitudeGain    = 0.8;
 
         numOfDrones = 10;
 
@@ -121,4 +124,8 @@ public class ConfigLoader {
     public double[] getDroneMasses() {
         return droneMasses;
     }
+
+    public double getAttitudeGain() { return attitudeGain; }
+
+    public double getAngularRateGain() { return angularRateGain; }
 }

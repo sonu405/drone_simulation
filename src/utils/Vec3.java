@@ -16,25 +16,33 @@ public class Vec3 {
         vec[2] = 0;
     }
 
-    public static Vec3 add(Vec3 a, Vec3 other) {
-        return new Vec3(a.getX() + other.getX(), a.getY() + other.getY(), a.getZ() + other.getZ());
-    }
     public static Vec3 sub(Vec3 a, Vec3 other) {
         return new Vec3(a.getX() - other.getX(), a.getY() - other.getY(), a.getZ() - other.getZ());
     }
 
     public Vec3 add(Vec3 other) {
-        vec[0] += other.getX();
-        vec[1] += other.getY();
-        vec[2] += other.getZ();
-        return this;
+         double newX =   getX() + other.getX();
+         double newY =   getY() + other.getY();
+         double newZ =   getZ() + other.getZ();
+
+        return new Vec3(newX, newY, newZ);
     }
 
+    // TODO (CHANGE): RIGHT NOW: IT MUTATES THE STATE
     public Vec3 mulScaler(double scaler) {
-        vec[0] *= scaler;
-        vec[1] *= scaler;
-        vec[2] *= scaler;
-        return this;
+        return new Vec3(
+            vec[0] * scaler,
+            vec[1] * scaler,
+            vec[2] * scaler
+        );
+    }
+
+    public Vec3 cross(Vec3 other) {
+        double newX =    getY() * other.getZ() - getZ() * other.getY();
+        double newY = - (getX() * other.getZ() - getZ() * other.getX());
+        double newZ =    getX() * other.getY() - getY() * other.getX();
+
+        return new Vec3(newX, newY, newZ);
     }
 
     public double getX() {
@@ -51,7 +59,14 @@ public class Vec3 {
         return  Math.sqrt(Math.pow(getX(), 2) + Math.pow(getY(), 2) + Math.pow(getZ(), 2));
     }
 
-    public Vec3 toUnitVec() {
-        return mulScaler(1 / getMagnitude()); // for unit  vector, multiplying 1 / magnitude
+    public Vec3 normalize() {
+        double mag = getMagnitude();
+
+        // TODO: SEND AN ERROR INSTEAD
+        if (mag == 0) {
+            return new Vec3(0, 0, 0);
+        }
+
+        return mulScaler(1.0 / mag); // for unit vector, multiplying 1 / magnitude
     }
 }

@@ -77,4 +77,9 @@ public class Drone extends Thread implements Observer {
     public Vec3 getAngVel() {
         return angVel;
     }
+
+//    public void getLinearAcc(Vec3 formationForce) {
+//        // ma = mg + RT + F_aero + F_rep + F_form
+//        Vec3 linearAcc =
+//    }
 }
