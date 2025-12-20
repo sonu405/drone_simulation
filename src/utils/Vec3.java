@@ -16,6 +16,9 @@ public class Vec3 {
         vec[2] = 0;
     }
 
+    public static Vec3 add(Vec3 a, Vec3 other) {
+        return new Vec3(a.getX() + other.getX(), a.getY() + other.getY(), a.getZ() + other.getZ());
+    }
     public static Vec3 sub(Vec3 a, Vec3 other) {
         return new Vec3(a.getX() - other.getX(), a.getY() - other.getY(), a.getZ() - other.getZ());
     }

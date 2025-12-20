@@ -18,6 +18,7 @@ public class Drone extends Thread implements Observer {
     // state attributes
     private FleetState state;
     private Simulator sim;
+    private Controller controller;
     private ArrayList<Drone> neighbourDrones;
 
     public Drone(int id, double mass, Vec3 initialPos, Vec3 finalPos, FleetState state, Simulator sim) {
@@ -30,10 +31,11 @@ public class Drone extends Thread implements Observer {
         this.finalPos = finalPos;
         this.currVel = new Vec3(); // 0 linear velocity
         this.angVel = new Vec3();  // 0 angular velocity
+        this.rotMat = new Matrix3x3();
 
         this.state = state;
         neighbourDrones = new ArrayList<>();
-        this.rotMat = new Matrix3x3();
+        this.controller = new Controller(this);
     }
 
     @Override
@@ -47,10 +49,27 @@ public class Drone extends Thread implements Observer {
         // the main logic of drone
         Vec3 formationForce = FormationManager.computeForce(this, neighbourDrones, sim.getConfigLoader().getPositionGainConst(),
                 sim.getConfigLoader().getVelocityGainConst());
+        Vec3 aeroDragForce = computeAeroDrag();
+        Vec3 repForce = CollisionAvoidance.computeRepForce(this, neighbourDrones);
+
+        Vec3 linearAcc = computeLinearAcc(aeroDragForce, repForce, formationForce, controller.calcNetThrust());
+
+        Vec3 newVel = getCurrVel().add(linearAcc.mulScaler(deltaT));
+
+        setCurrVel(newVel);
+        setCurrPos(getCurrPos().add(newVel.mulScaler(deltaT)));
     }
 
     public Vec3 getCurrPos() {
         return currPos;
+    }
+
+    public void setCurrPos(Vec3 currPos) {
+        this.currPos = currPos;
+    }
+
+    public void setCurrVel(Vec3 currVel) {
+        this.currVel = currVel;
     }
 
     public Vec3 getCurrVel() {
@@ -78,8 +97,17 @@ public class Drone extends Thread implements Observer {
         return angVel;
     }
 
-//    public void getLinearAcc(Vec3 formationForce) {
-//        // ma = mg + RT + F_aero + F_rep + F_form
-//        Vec3 linearAcc =
-//    }
+    public Vec3 computeLinearAcc(Vec3 aeroDragForce, Vec3 repForce, Vec3 formationForce, Vec3 netThrust) {
+        // ma = mg + RT + F_aero + F_rep + F_form
+
+        Vec3 thrustProd = getRotMat().mulVec(netThrust);
+        Vec3 linearAcc = aeroDragForce.add(repForce).add(formationForce).add(thrustProd).mulScaler(1.0 / mass);
+        linearAcc = linearAcc.add(getSim().getConfigLoader().getGravConst());
+
+        return linearAcc;
+    }
+
+    public Vec3 computeAeroDrag() {
+        return getCurrVel().mulScaler(-sim.getConfigLoader().getDragConst());
+    }
 }
