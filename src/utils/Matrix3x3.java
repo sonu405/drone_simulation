@@ -76,4 +76,29 @@ public class Matrix3x3 {
             getC3().mulScaler(scalar)
         );
     }
+
+    public double get(int row, int col) {
+        // 1. Identify which column (Vec3) to look at based on 'col'
+        Vec3 targetColumn;
+        if (col == 0) {
+            targetColumn = c1;
+        } else if (col == 1) {
+            targetColumn = c2;
+        } else if (col == 2) {
+            targetColumn = c3;
+        } else {
+            throw new IndexOutOfBoundsException("Column index must be 0, 1, or 2");
+        }
+
+        // 2. Identify which element in that Vec3 to return based on 'row'
+        if (row == 0) {
+            return targetColumn.getX();
+        } else if (row == 1) {
+            return targetColumn.getY();
+        } else if (row == 2) {
+            return targetColumn.getZ();
+        } else {
+            throw new IndexOutOfBoundsException("Row index must be 0, 1, or 2");
+        }
+    }
 }

@@ -52,4 +52,8 @@ public class Simulator implements Observer {
     public ConfigLoader getConfigLoader() {
         return cl;
     }
+
+    public Drone[] getDrones() {
+        return drones;
+    }
 }

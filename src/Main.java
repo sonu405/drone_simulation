@@ -14,7 +14,7 @@ class Main {
         // TODO: Add env to drone
         Simulator sim = new Simulator(fleetState, cl);
 
-        for (int i = 0; i < 1000 ; i++) {
+        for (int i = 0; i < 150 ; i++) {
             System.out.println("\n\n======= STEP " + i + " ========");
 //            try {
 //                Thread.sleep(1000);

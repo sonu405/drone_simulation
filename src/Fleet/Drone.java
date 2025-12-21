@@ -196,4 +196,34 @@ public class Drone implements Observer {
     public double getDeltaT() {
         return deltaT;
     }
+
+    public double[] angleFromCurRotMat () {
+        double r11 = getRotMat().get(0, 0);
+        double r21 = getRotMat().get(1, 0);
+        double r31 = getRotMat().get(2, 0);
+        double r32 = getRotMat().get(2, 1);
+        double r33 = getRotMat().get(2, 2);
+
+        // Check for gimbal lock
+        double sy = Math.sqrt(r11*r11 + r21*r21);
+
+        boolean singular = sy < 1e-6;
+
+        // roll, pitch, yaw
+        double[] angles = new double[3];
+        if (!singular) {
+            // Standard case
+            angles[0] = Math.atan2(r32, r33);
+            angles[1] = Math.atan2(-r31, sy);
+            angles[2] = Math.atan2(r21, r11);
+        } else {
+            // Gimbal lock
+            double r12 = getRotMat().get(0, 1);
+            double r22 = getRotMat().get(1, 1);
+            angles[0] = Math.atan2(-r12, r22);
+            angles[1] = Math.atan2(-r31, sy);
+            angles[2] = 0;
+        }
+        return angles;
+    }
 }
