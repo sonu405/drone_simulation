@@ -11,25 +11,47 @@ public class Controller {
     }
 
     public Vec3 calcInertialThrust() {
-        // NOTE: Hard coded to 0
-        Vec3 velDesired = new Vec3();
 
         // error_p
         Vec3 errorPos = Vec3.sub(d.getFinalPos(), d.getCurrPos());
+
+        double k_approach = 0.2;
+
+        double distance = errorPos.getMagnitude();
+        if (distance < 3.0) {
+            k_approach = 0.15 * (distance / 3.0) + 0.05;
+        }
+
+        // velocity desired
+        Vec3 velDesired = errorPos.mulScaler(k_approach);
+
+        // capping the desired velocity (no idea about the calculation)
+        if (velDesired.getMagnitude() > 2.0) {
+            velDesired = velDesired.normalize().mulScaler(2.0);
+        }
+
+        // error Vel
         Vec3 errorVel = Vec3.sub(velDesired, d.getCurrVel());
+
+        System.out.printf("""
+                Error pos: %s,
+                Error vel: %s
+                """, errorPos, errorVel);
 
         // desire Linear acceleration
         errorPos = errorPos.mulScaler(d.getSim().getConfigLoader().getPositionGainConst());
         errorVel = errorVel.mulScaler(d.getSim().getConfigLoader().getVelocityGainConst());
 
-        Vec3 desLinearAcc = Vec3.add(
-                Vec3.add(errorPos, errorVel),
-                d.getSim().getConfigLoader().getGravConst()
-        );
+//        Vec3 desErrorAcc = Vec3.add(
+//                Vec3.add(errorPos, errorVel),
+//                d.getSim().getConfigLoader().getGravConst()
+//        );
+        // Since we add gravity later while the net linear acceleration so removing gravity for now
+        Vec3 desErrorAcc = Vec3.add(errorPos, errorVel);
 
         // Inertial component of thrust
-        desLinearAcc = desLinearAcc.mulScaler(d.getMass());
-        return desLinearAcc;
+        desErrorAcc = desErrorAcc.mulScaler(d.getMass());
+        return desErrorAcc;
     }
 
     public Vec3 calcNetThrust() {

@@ -31,23 +31,29 @@ public class ConfigLoader {
     public ConfigLoader() {
         Random rand = new Random();
 
-        dragConst = rand.nextDouble(0.5 - 0.05) + 0.05; // 0.05 -> 0.5
+        dragConst = rand.nextDouble(0.1 - 0.05) + 0.05; // 0.05 -> 0.1
         repulsionConst = rand.nextDouble(5 - 0.5) + 0.5; // 0.5 -> 5.0
-        positionGainConst = rand.nextDouble(6 - 1) + 1; // 1.0 -> 6.0
-        velocityGainConst = rand.nextDouble(4 - 1) + 1; // 1.0 -> 4.0
-        commRange = rand.nextDouble(25 - 5) + 5; // 5.0 -> 25.0
+//        positionGainConst = rand.nextDouble(6 - 1) + 1; // 1.0 -> 6.0
+//        velocityGainConst = rand.nextDouble(4 - 1) + 1; // 1.0 -> 4.0
+        positionGainConst = 3.0;
+        velocityGainConst = 2.0;
+//        commRange = rand.nextDouble(25 - 5) + 5; // 5.0 -> 25.0
+        // AVOIDING calculation of collision forces by removing any communication
+        commRange = 0;
         packetLoss = 0.05;
         angularRateGain = 0.15;
         attitudeGain    = 0.8;
 
-        numOfDrones = 2;
+        numOfDrones = 1;
 
-        initialFormationCentre = new Vec3(0,0,10);
-        finalFormationCentre = new Vec3(50,0,10);
+        // To move in z direction only from origin
+        initialFormationCentre = new Vec3(0,0,0);
+        finalFormationCentre = new Vec3(0,0,10);
         offsets = new Vec3[numOfDrones];
 
-        offsets[0] = new Vec3(-18,0,0);
-        offsets[1] = new Vec3(-14,0,0);
+        // one drone on x = 0, other on  x = 4
+        offsets[0] = new Vec3(0,0,0);
+//        offsets[1] = new Vec3(4,0,0);
 //        offsets[2] = new Vec3(-10,0,0);
 //        offsets[3] = new Vec3(-6,0,0);
 //        offsets[4] = new Vec3(-2,0,0);
