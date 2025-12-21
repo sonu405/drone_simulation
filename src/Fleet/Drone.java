@@ -41,6 +41,13 @@ public class Drone implements Observer {
 
     @Override
     public void update() {
+        System.out.printf("""
+                BEFORE UPDATING:
+                CurLinVel: %s
+                CurrPos:   %s
+                -------------
+                """, currVel, currPos);
+
         this.deltaT = state.getDeltaT();
         this.neighbourDrones = sim.getNeighbourDrones(id);
 
