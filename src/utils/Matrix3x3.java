@@ -11,8 +11,17 @@ public class Matrix3x3 {
         this.c3 = c3;
     }
 
+    public Matrix3x3(double r1c1, double r1c2, double r1c3,
+                     double r2c1, double r2c2, double r2c3,
+                     double r3c1, double r3c2, double r3c3
+                     ) {
+       this.c1 = new Vec3(r1c1, r2c1, r3c1);
+       this.c2 = new Vec3(r1c2, r2c2, r3c2);
+       this.c3 = new Vec3(r1c3, r2c3, r3c3);
+    }
+
     public Matrix3x3() {
-        this.c1 = new Vec3(1, 0, 1);
+        this.c1 = new Vec3(1, 0, 0);
         this.c2 = new Vec3(0, 1, 0);
         this.c3 = new Vec3(0, 0, 1);
     }
@@ -51,5 +60,20 @@ public class Matrix3x3 {
         Vec3 newC3 = c3.mulScaler(v.getZ());
 
         return Vec3.add(Vec3.add(newC1, newC2), newC3);
+    }
+
+    public Matrix3x3 add(Matrix3x3 o) {
+        return new Matrix3x3(
+            Vec3.add(getC1(), o.getC1()),
+            Vec3.add(getC2(), o.getC2()),
+            Vec3.add(getC3(), o.getC3())
+        );
+    }
+    public Matrix3x3 mulScalar(double scalar) {
+        return new Matrix3x3(
+            getC1().mulScaler(scalar),
+            getC2().mulScaler(scalar),
+            getC3().mulScaler(scalar)
+        );
     }
 }

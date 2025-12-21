@@ -8,10 +8,10 @@ import java.util.List;
 
 public class FleetState implements Subject {
     private List<Observer> observers = new ArrayList<Observer>();
-    private float deltaT;
+    private double deltaT;
 
-    public FleetState() {
-        deltaT = 0;
+    public FleetState(double deltaT) {
+        this.deltaT = deltaT;
     }
 
     @Override
@@ -36,7 +36,7 @@ public class FleetState implements Subject {
         notifyObervers();
     }
 
-    public float getDeltaT() {
+    public double getDeltaT() {
         return deltaT;
     }
 }

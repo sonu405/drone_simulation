@@ -40,6 +40,21 @@ public class Vec3 {
         );
     }
 
+    public Vec3 mul(Vec3 other) {
+        return new Vec3(
+            getX() * other.getX(),
+            getY() * other.getY(),
+            getZ() * other.getZ()
+        );
+    }
+
+    public Vec3 mulInv() {
+        return new Vec3(
+            (getX() != 0) ? 1.0 / getX() : 0,
+            (getY() != 0) ? 1.0 / getY() : 0,
+            (getZ() != 0) ? 1.0 / getZ() : 0);
+    }
+
     public Vec3 cross(Vec3 other) {
         double newX =    getY() * other.getZ() - getZ() * other.getY();
         double newY = - (getX() * other.getZ() - getZ() * other.getX());
@@ -71,5 +86,9 @@ public class Vec3 {
         }
 
         return mulScaler(1.0 / mag); // for unit vector, multiplying 1 / magnitude
+    }
+    @Override
+    public String toString() {
+        return String.format("(%.2f, %.2f, %.2f)", getX(), getY(), getZ());
     }
 }

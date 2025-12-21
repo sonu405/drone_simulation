@@ -4,7 +4,6 @@ import utils.Vec3;
 import java.util.Random;
 
 public class ConfigLoader {
-    private Vec3[][] rotation_matrix;
     private double [] droneMasses;
     private double dragConst; // drag constant
     private double repulsionConst; // Repulsion constant
@@ -41,15 +40,7 @@ public class ConfigLoader {
         angularRateGain = 0.15;
         attitudeGain    = 0.8;
 
-        numOfDrones = 10;
-
-        rotation_matrix = new Vec3[numOfDrones][3];
-        for (int i = 0; i < numOfDrones; i++) {
-            rotation_matrix[i][0] = new Vec3(rand.nextInt(1),rand.nextInt(1),rand.nextInt(1));
-            rotation_matrix[i][1] = new Vec3(rand.nextInt(1),rand.nextInt(1),rand.nextInt(1));
-            rotation_matrix[i][2] =  new Vec3(rand.nextInt(1),rand.nextInt(1),rand.nextInt(1));
-        }
-
+        numOfDrones = 2;
 
         initialFormationCentre = new Vec3(0,0,10);
         finalFormationCentre = new Vec3(50,0,10);
@@ -57,14 +48,14 @@ public class ConfigLoader {
 
         offsets[0] = new Vec3(-18,0,0);
         offsets[1] = new Vec3(-14,0,0);
-        offsets[2] = new Vec3(-10,0,0);
-        offsets[3] = new Vec3(-6,0,0);
-        offsets[4] = new Vec3(-2,0,0);
-        offsets[5] = new Vec3( 2,0,0);
-        offsets[6] = new Vec3( 6,0,0);
-        offsets[7] = new Vec3(10,0,0);
-        offsets[8] = new Vec3(14,0,0);
-        offsets[9] = new Vec3(18,0,0);
+//        offsets[2] = new Vec3(-10,0,0);
+//        offsets[3] = new Vec3(-6,0,0);
+//        offsets[4] = new Vec3(-2,0,0);
+//        offsets[5] = new Vec3( 2,0,0);
+//        offsets[6] = new Vec3( 6,0,0);
+//        offsets[7] = new Vec3(10,0,0);
+//        offsets[8] = new Vec3(14,0,0);
+//        offsets[9] = new Vec3(18,0,0);
 
         // masses of drones
         droneMasses = new double[numOfDrones]; // 1 to 4.5 kg
@@ -83,10 +74,6 @@ public class ConfigLoader {
 
     public Vec3[] getOffsets() {
         return offsets;
-    }
-
-    public Vec3[] getRotationMatrix(int index) {
-        return rotation_matrix[index];
     }
 
     public double getDragConst() {
