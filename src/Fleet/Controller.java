@@ -6,8 +6,13 @@ import utils.Vec3;
 public class Controller {
     Drone d;
 
+    // additional integral error accumalator
+    private Vec3 integralError;
+    private static final double INTEGRAL_MAX = 10.0; // MAX limit
+
     public Controller(Drone d) {
         this.d = d;
+        this.integralError = new Vec3(0,0,0);
     }
 
     public Vec3 calcInertialThrust() {
@@ -15,9 +20,25 @@ public class Controller {
         // error_p
         Vec3 errorPos = Vec3.sub(d.getFinalPos(), d.getCurrPos());
 
-        double k_approach = 0.2;
+        // Accumalate integral error over time
+        double dt = d.getDeltaT();
+        integralError = integralError.add(errorPos.mulScaler(dt));
 
+        // Anti-windup: cap the integral term to prevent it from growing too large
+        double integralMag = integralError.getMagnitude();
+        if (integralMag > INTEGRAL_MAX) {
+            integralError = integralError.normalize().mulScaler(INTEGRAL_MAX);
+        }
+
+//        if (errorPos.getMagnitude() < 0.1) {
+//            // Only reset horizontal integral, keep vertical for hovering
+//            integralError = new Vec3(0, 0, integralError.getZ());
+//        }
+
+        // Calculate desired velocity
+        double k_approach = 0.2;
         double distance = errorPos.getMagnitude();
+
         if (distance < 3.0) {
             k_approach = 0.15 * (distance / 3.0) + 0.05;
         }
@@ -38,16 +59,19 @@ public class Controller {
                 Error vel: %s
                 """, errorPos, errorVel);
 
-        // desire Linear acceleration
-        errorPos = errorPos.mulScaler(d.getSim().getConfigLoader().getPositionGainConst());
-        errorVel = errorVel.mulScaler(d.getSim().getConfigLoader().getVelocityGainConst());
+        // PID control law: a_cmd = k_p * e_p + k_i * integral(e_p) + k_d * e_v
+        double integralGainConst = 1.0;  // k_i
+        Vec3 proportionalTerm = errorPos.mulScaler(d.getSim().getConfigLoader().getPositionGainConst());
+        Vec3 integralTerm = integralError.mulScaler(integralGainConst);
+        Vec3 derivativeTerm = errorVel.mulScaler(d.getSim().getConfigLoader().getVelocityGainConst());
 
-//        Vec3 desErrorAcc = Vec3.add(
-//                Vec3.add(errorPos, errorVel),
-//                d.getSim().getConfigLoader().getGravConst()
-//        );
+//        errorPos = errorPos.mulScaler(d.getSim().getConfigLoader().getPositionGainConst());
+//        errorVel = errorVel.mulScaler(d.getSim().getConfigLoader().getVelocityGainConst());
+
+
         // Since we add gravity later while the net linear acceleration so removing gravity for now
-        Vec3 desErrorAcc = Vec3.add(errorPos, errorVel);
+//        Vec3 desErrorAcc = Vec3.add(errorPos, errorVel);
+        Vec3 desErrorAcc =  Vec3.add(Vec3.add(proportionalTerm, integralTerm), derivativeTerm);
 
         // Inertial component of thrust
         desErrorAcc = desErrorAcc.mulScaler(d.getMass());

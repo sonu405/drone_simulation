@@ -39,29 +39,32 @@ public class ConfigLoader {
         velocityGainConst = 2.0;
 //        commRange = rand.nextDouble(25 - 5) + 5; // 5.0 -> 25.0
         // AVOIDING calculation of collision forces by removing any communication
-        commRange = 0;
+        commRange = 2;
         packetLoss = 0.05;
         angularRateGain = 0.15;
         attitudeGain    = 0.8;
 
-        numOfDrones = 1;
+        numOfDrones = 10;
 
         // To move in z direction only from origin
-        initialFormationCentre = new Vec3(0,0,0);
-        finalFormationCentre = new Vec3(0,0,10);
+//        initialFormationCentre = new Vec3(0,0,0);
+//        finalFormationCentre = new Vec3(0,0,10);
+        initialFormationCentre = new Vec3(0,0,10);
+        finalFormationCentre = new Vec3(50,0,10);
         offsets = new Vec3[numOfDrones];
 
         // one drone on x = 0, other on  x = 4
-        offsets[0] = new Vec3(0,0,0);
-//        offsets[1] = new Vec3(4,0,0);
-//        offsets[2] = new Vec3(-10,0,0);
-//        offsets[3] = new Vec3(-6,0,0);
-//        offsets[4] = new Vec3(-2,0,0);
-//        offsets[5] = new Vec3( 2,0,0);
-//        offsets[6] = new Vec3( 6,0,0);
-//        offsets[7] = new Vec3(10,0,0);
-//        offsets[8] = new Vec3(14,0,0);
-//        offsets[9] = new Vec3(18,0,0);
+//        offsets[0] = new Vec3(0,0,0);
+        offsets[0] = new Vec3(-18,0,0);
+        offsets[1] = new Vec3(-14,0,0);
+        offsets[2] = new Vec3(-10,0,0);
+        offsets[3] = new Vec3(-6,0,0);
+        offsets[4] = new Vec3(-2,0,0);
+        offsets[5] = new Vec3(2,0,0);
+        offsets[6] = new Vec3(6,0,0);
+        offsets[7] = new Vec3(10,0,0);
+        offsets[8] = new Vec3(14,0,0);
+        offsets[9] = new Vec3(18,0,0);
 
         // masses of drones
         droneMasses = new double[numOfDrones]; // 1 to 4.5 kg

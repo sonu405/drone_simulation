@@ -42,11 +42,12 @@ public class Drone implements Observer {
     @Override
     public void update() {
         System.out.printf("""
+                ====== ID: %d ======
                 BEFORE UPDATING:
                 CurLinVel: %s
                 CurrPos:   %s
                 -------------
-                """, currVel, currPos);
+                """, id, currVel, currPos);
 
         this.deltaT = state.getDeltaT();
         this.neighbourDrones = sim.getNeighbourDrones(id);
@@ -113,6 +114,7 @@ public class Drone implements Observer {
         return  I.mulInv().mul(Vec3.sub(torque, w.cross(I.mul(w))));
     }
 
+    // MUST return R * Exp(w dt)
     public Matrix3x3 computeRotMat() {
         Vec3 w = getAngVel();
 
@@ -136,7 +138,7 @@ public class Drone implements Observer {
                     .add( unitRotMatSq.mulScalar(1 - Math.cos(rotAngle)) );
         }
 
-        return Matrix3x3.transpose(getRotMat()).mul(angExpMat);
+        return getRotMat().mul(angExpMat);
     }
 
 
@@ -189,4 +191,7 @@ public class Drone implements Observer {
         return angVel;
     }
 
+    public double getDeltaT() {
+        return deltaT;
+    }
 }
