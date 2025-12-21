@@ -4,7 +4,8 @@ import utils.Matrix3x3;
 import utils.Vec3;
 
 public class Controller {
-    Drone d;
+    private Drone d;
+    private Vec3 inertialThrust;
 
     // additional integral error accumalator
     private Vec3 integralError;
@@ -13,14 +14,19 @@ public class Controller {
     public Controller(Drone d) {
         this.d = d;
         this.integralError = new Vec3(0,0,0);
+        this.inertialThrust = new Vec3();
     }
 
-    public Vec3 calcInertialThrust() {
+    public void update() {
+        inertialThrust = calcInertialThrust();
+    }
+
+    Vec3 calcInertialThrust() {
 
         // error_p
         Vec3 errorPos = Vec3.sub(d.getFinalPos(), d.getCurrPos());
 
-        // Accumalate integral error over time
+        // Accumulate integral error over time
         double dt = d.getDeltaT();
         integralError = integralError.add(errorPos.mulScaler(dt));
 
@@ -29,11 +35,6 @@ public class Controller {
         if (integralMag > INTEGRAL_MAX) {
             integralError = integralError.normalize().mulScaler(INTEGRAL_MAX);
         }
-
-//        if (errorPos.getMagnitude() < 0.1) {
-//            // Only reset horizontal integral, keep vertical for hovering
-//            integralError = new Vec3(0, 0, integralError.getZ());
-//        }
 
         // Calculate desired velocity
         double k_approach = 0.2;
@@ -79,9 +80,6 @@ public class Controller {
     }
 
     public Vec3 calcNetThrust() {
-        // Inertial component of thrust
-        Vec3 inertialThrust = calcInertialThrust();
-
         // Thrust of the body
         Vec3 thrustBody = Matrix3x3.transpose(d.getRotMat()).mulVec(inertialThrust);
 
@@ -90,7 +88,7 @@ public class Controller {
 
     public Matrix3x3 computeTargetRotMat() {
         // inertial thrust unit vector
-        Vec3 z_b = calcInertialThrust().normalize();
+        Vec3 z_b = inertialThrust.normalize();
 
         // worldRef
         Vec3 x_c;
@@ -136,4 +134,7 @@ public class Controller {
         return Vec3.add(errorTerm, angTerm);
     }
 
+    public Vec3 getInertialThrust() {
+        return inertialThrust;
+    }
 }

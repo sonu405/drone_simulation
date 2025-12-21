@@ -31,18 +31,14 @@ public class ConfigLoader {
     public ConfigLoader() {
         Random rand = new Random();
 
-        dragConst = rand.nextDouble(0.1 - 0.05) + 0.05; // 0.05 -> 0.1
-        repulsionConst = rand.nextDouble(5 - 0.5) + 0.5; // 0.5 -> 5.0
-//        positionGainConst = rand.nextDouble(6 - 1) + 1; // 1.0 -> 6.0
-//        velocityGainConst = rand.nextDouble(4 - 1) + 1; // 1.0 -> 4.0
-        positionGainConst = 3.0;
-        velocityGainConst = 2.0;
-//        commRange = rand.nextDouble(25 - 5) + 5; // 5.0 -> 25.0
-        // AVOIDING calculation of collision forces by removing any communication
-        commRange = 2;
+        dragConst = 0.2;
+        repulsionConst = 1;
+        positionGainConst = 3.5;
+        velocityGainConst = 2.5;
+        commRange = 10;
         packetLoss = 0.05;
-        angularRateGain = 0.15;
-        attitudeGain    = 0.8;
+        angularRateGain = 0.15; // 0.25
+        attitudeGain    = 8.5; // 1.5
 
         numOfDrones = 10;
 
@@ -67,9 +63,9 @@ public class ConfigLoader {
         offsets[9] = new Vec3(18,0,0);
 
         // masses of drones
-        droneMasses = new double[numOfDrones]; // 1 to 4.5 kg
+        droneMasses = new double[numOfDrones]; // 1 to 2.5 kg
         for (int i = 0; i < getNumOfDrones(); i++) {
-            droneMasses[i] = rand.nextDouble(4.5-1) + 1;
+            droneMasses[i] = rand.nextDouble(2.5-1) + 1;
         }
     }
 

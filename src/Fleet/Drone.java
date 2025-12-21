@@ -41,6 +41,7 @@ public class Drone implements Observer {
 
     @Override
     public void update() {
+        controller.update();
         System.out.printf("""
                 ====== ID: %d ======
                 BEFORE UPDATING:
@@ -55,6 +56,7 @@ public class Drone implements Observer {
 
         Vec3 formationForce = FormationManager.computeForce(this, neighbourDrones, sim.getConfigLoader().getPositionGainConst(),
                 sim.getConfigLoader().getVelocityGainConst());
+
         Vec3 aeroDragForce = computeAeroDrag();
         Vec3 repForce = CollisionAvoidance.computeRepForce(this, neighbourDrones);
 
