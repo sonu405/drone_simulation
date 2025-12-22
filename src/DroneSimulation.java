@@ -174,7 +174,16 @@ public class DroneSimulation extends JPanel {
 
 
         // TODO: Add env to drone
-        Simulator sim = new Simulator(fleetState, cl);
+        Simulator sim = new Simulator(fleetState, cl, env);
+
+
+        Logger logger = null;
+        try {
+            logger = new Logger(sim,fleetState);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
 
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Multi-Drone 3D Visualization");
@@ -184,5 +193,11 @@ public class DroneSimulation extends JPanel {
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
+
+        try{
+            logger.close();
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

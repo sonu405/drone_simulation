@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 // Takes all the drones as input and finds out which drones can communicate with what.
 public class CommunicationModule {
+   private static int successfulComms = 0;
+
     public static ArrayList<Drone>[] computeNeighbouringDrones(Drone[] drones, double commRange, double packetLoss) {
 
         ArrayList<Drone>[] neighbourDrones = new ArrayList[drones.length];
@@ -22,6 +24,9 @@ public class CommunicationModule {
                 if (Vec3.sub(drones[i].getCurrPos(), drones[j].getCurrPos()).getMagnitude() < commRange) {
                     // We only register drone as neighbour for our calculations if the current drone was able to
                     // receive information from the other drone. This happends when the packets were not lost midway.
+
+                    // counting succesfull communications for logging
+                    successfulComms++;
                     if (Math.random() > packetLoss) {
                         neighbourDrones[i].add(drones[j]);
                     }
@@ -30,5 +35,12 @@ public class CommunicationModule {
         }
 
         return neighbourDrones;
+    }
+
+    public static int getSuccessfulComms() {
+        return successfulComms;
+    }
+    public static void resetSuccessRate() {
+        successfulComms = 0;
     }
 }

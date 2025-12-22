@@ -148,8 +148,20 @@ public class Drone implements Observer {
         return currPos;
     }
 
-    public void setCurrPos(Vec3 currPos) {
-        this.currPos = currPos;
+    public void setCurrPos(Vec3 newPos) {
+        if (newPos.getX() > sim.getEnv().getWidth()) {
+            newPos.setX(sim.getEnv().getWidth());
+        }else if (newPos.getX() < 0) {
+            newPos.setX(0);
+        }
+
+        if (newPos.getY() > sim.getEnv().getHeight()) {
+            newPos.setY(sim.getEnv().getHeight());
+        }else if (newPos.getY() < 0) {
+            newPos.setY(0);
+        }
+
+        this.currPos = newPos;
     }
 
     public void setAngVel(Vec3 angVel) {
@@ -195,6 +207,10 @@ public class Drone implements Observer {
 
     public double getDeltaT() {
         return deltaT;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 
     public double[] angleFromCurRotMat () {

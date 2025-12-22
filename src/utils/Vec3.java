@@ -91,4 +91,15 @@ public class Vec3 {
     public String toString() {
         return String.format("(%.2f, %.2f, %.2f)", getX(), getY(), getZ());
     }
+
+
+    public void setX(double nv) {
+        vec[0] = nv;
+    }
+    public void setY(double nv) {
+        vec[1] = nv;
+    }
+    public void setZ(double nv) {
+        vec[2] = nv;
+    }
 }

@@ -10,10 +10,13 @@ public class Simulator implements Observer {
     ArrayList<Drone>[] neighbourDrones;
     private Drone[] drones;
     private ConfigLoader cl;
+    private Environment env;
 
-    public Simulator(FleetState state, ConfigLoader cl) {
+    public Simulator(FleetState state, ConfigLoader cl, Environment env) {
         this.state = state;
         this.cl = cl;
+        this.env = env;
+
         drones = new Drone[cl.getNumOfDrones()];
 
 
@@ -55,5 +58,9 @@ public class Simulator implements Observer {
 
     public Drone[] getDrones() {
         return drones;
+    }
+
+    public Environment getEnv() {
+        return env;
     }
 }

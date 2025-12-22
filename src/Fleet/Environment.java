@@ -10,9 +10,12 @@ public class Environment {
         this.height = height;
     }
 
+    public double getWidth() {
+        return width;
+    }
 
-    // Positional Constraints
-    // in x direction: P_x must be [0, width]
-    // in y direction: P_y must be [0, height]
-
+    public double getHeight() {
+        return height;
+    }
 }
+

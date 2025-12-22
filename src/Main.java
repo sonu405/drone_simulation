@@ -1,20 +1,23 @@
-import Fleet.ConfigLoader;
-import Fleet.Environment;
-import Fleet.FleetState;
-import Fleet.Simulator;
+import Fleet.*;
 
 class Main {
     public static void main() {
         ConfigLoader cl= new ConfigLoader();
-        Environment env = new Environment(1000,1000);
+        Environment env = new Environment(100,50);
 
         FleetState fleetState = new FleetState(0.05);
 
-
         // TODO: Add env to drone
-        Simulator sim = new Simulator(fleetState, cl);
+        Simulator sim = new Simulator(fleetState, cl, env);
 
-        for (int i = 0; i < 150 ; i++) {
+        Logger logger = null;
+        try {
+            logger = new Logger(sim,fleetState);
+        }catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+
+        for (int i = 0; i < 5000 ; i++) {
             System.out.println("\n\n======= STEP " + i + " ========");
 //            try {
 //                Thread.sleep(1000);
@@ -22,7 +25,12 @@ class Main {
 //                System.out.println(e.getMessage());
 //            }
             fleetState.notifyObervers();
-            System.out.println("Slept for 1000 msec");
+        }
+
+        try{
+            logger.close();
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
         }
     }
 }
