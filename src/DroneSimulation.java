@@ -9,12 +9,8 @@ public class DroneSimulation extends JPanel {
     private Drone[] drones;
 
     // Fixed camera settings
-    private double cameraX = 0;
-    private double cameraY = 300;  // High up
-    private double cameraZ = -400; // Back from origin
-    private double targetX = 0;    // Look at origin
-    private double targetY = 50;
-    private double targetZ = 0;
+    private Vec3 camera = new Vec3(0,300, -400);
+    private Vec3 targetCamera = new Vec3(0,50, 0);
     private double focalLength = 500;
 
     private Simulator sim;
@@ -57,8 +53,8 @@ public class DroneSimulation extends JPanel {
 
         // Lines parallel to X-axis
         for (int z = -gridSize; z <= gridSize; z += gridSpacing) {
-            Point2D p1 = worldToScreen(-gridSize, 0, z);
-            Point2D p2 = worldToScreen(gridSize, 0, z);
+            Point2D p1 = worldToScreen(new Vec3(-gridSize, 0, z));
+            Point2D p2 = worldToScreen(new Vec3(gridSize, 0, z));
             if (p1 != null && p2 != null) {
                 g2d.drawLine((int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY());
             }
@@ -66,8 +62,8 @@ public class DroneSimulation extends JPanel {
 
         // Lines parallel to Z-axis
         for (int x = -gridSize; x <= gridSize; x += gridSpacing) {
-            Point2D p1 = worldToScreen(x, 0, -gridSize);
-            Point2D p2 = worldToScreen(x, 0, gridSize);
+            Point2D p1 = worldToScreen(new Vec3(x, 0, -gridSize));
+            Point2D p2 = worldToScreen(new Vec3(x, 0, gridSize));
             if (p1 != null && p2 != null) {
                 g2d.drawLine((int)p1.getX(), (int)p1.getY(), (int)p2.getX(), (int)p2.getY());
             }
@@ -79,13 +75,14 @@ public class DroneSimulation extends JPanel {
         // Super simple: just a circle with a direction line
 
         // Drone center
-        Point2D center = worldToScreen(pos.getX(), pos.getY(), pos.getZ());
+        Point2D center = worldToScreen(pos);
 
         // Front point (shows direction)
         Point2D front = worldToScreen(
+                new Vec3(
                 pos.getX()+ 25 * Math.sin(yaw),
                 pos.getY(),
-                pos.getZ() - 25 * Math.cos(yaw)
+                pos.getZ() - 25 * Math.cos(yaw))
         );
 
         if (center != null) {
@@ -110,65 +107,76 @@ public class DroneSimulation extends JPanel {
     }
 
     // Camera transformation and projection
-    private Point2D worldToScreen(double worldX, double worldY, double worldZ) {
-        // Use fixed camera position
-        double camX = cameraX;
-        double camY = cameraY;
-        double camZ = cameraZ;
-
-        // Camera looks at target point
-        double tgtX = targetX;
-        double tgtY = targetY;
-        double tgtZ = targetZ;
-
+    private Point2D worldToScreen(Vec3 world) {
         // Transform to camera space
-        // 1. Translate so camera is at origin
-        double x = worldX - camX;
-        double y = worldY - camY;
-        double z = worldZ - camZ;
+        Vec3 camInWorldCor = Vec3.sub(world, camera);
 
-        // 2. Rotate to camera orientation
         // Calculate camera basis vectors
-        double forwardX = tgtX - camX;
-        double forwardY = tgtY - camY;
-        double forwardZ = tgtZ - camZ;
-        double len = Math.sqrt(forwardX*forwardX + forwardY*forwardY + forwardZ*forwardZ);
-        forwardX /= len; forwardY /= len; forwardZ /= len;
+       Vec3 forward = Vec3.sub(targetCamera, camera).normalize();
+
+        // World up vector
+        Vec3 worldUp = new Vec3(0, 1, 0);
 
         // Right = forward × worldUp
-        double rightX = forwardY * 0 - forwardZ * 1;  // cross with (0,1,0)
-        double rightY = forwardZ * 0 - forwardX * 0;
-        double rightZ = forwardX * 1 - forwardY * 0;
-        len = Math.sqrt(rightX*rightX + rightY*rightY + rightZ*rightZ);
-        rightX /= len; rightY /= len; rightZ /= len;
+        Vec3 right = forward.cross(worldUp).normalize();
 
         // Up = right × forward
-        double upX = rightY * forwardZ - rightZ * forwardY;
-        double upY = rightZ * forwardX - rightX * forwardZ;
-        double upZ = rightX * forwardY - rightY * forwardX;
+        Vec3 up = right.cross(forward).normalize();
 
-        // Transform to camera basis
-        double cx = x * rightX + y * rightY + z * rightZ;
-        double cy = x * upX + y * upY + z * upZ;
-        double cz = -(x * forwardX + y * forwardY + z * forwardZ);
+        // Transform to camera basis (dot products)
+        double cx = camInWorldCor.dot(right);
+        double cy = camInWorldCor.dot(up);
+        double cz = -camInWorldCor.dot(forward);
 
-        // 3. Perspective projection
+        // Perspective projection
         if (cz >= 0) return null; // Behind camera
 
         double screenX = (cx * focalLength) / (-cz);
         double screenY = (cy * focalLength) / (-cz);
 
-        // 4. Convert to screen coordinates
+        // Convert to screen coordinates
         screenX += getWidth() / 2;
         screenY = getHeight() / 2 - screenY;
 
         return new Point2D.Double(screenX, screenY);
     }
+//    private Point2D worldToScreen(Vec3 world) {
+//        // Transform to camera space
+//        Vec3 camInWorldCor = Vec3.sub(world, camera);
+//
+//        // Calculate camera basis vectors
+//        Vec3 forward = Vec3.sub(targetCamera, camera).normalize();
+//
+//        // World up vector
+//        Vec3 worldUp = new Vec3(0, 1, 0);
+//
+//        // Right = forward × worldUp
+//        Vec3 right = forward.cross(worldUp).normalize();
+//
+//        // Up = right × forward
+//        Vec3 up = right.cross(forward).normalize();
+//
+//        // Transform to camera basis
+//        double cx = camInWorldCor.dot(right);
+//        double cy = camInWorldCor.dot(up);
+//        double cz = -camInWorldCor.dot(forward);  // Negative because camera looks along -Z
+//
+//        if (cz >= 0) return null; // Behind camera
+//
+//        double screenX = (cx * focalLength) / (-cz);
+//        double screenY = (cy * focalLength) / (-cz);
+//
+//        // 5. Convert to screen coordinates
+//        screenX += getWidth() / 2;
+//        screenY = getHeight() / 2 - screenY;
+//
+//        return new Point2D.Double(screenX, screenY);
+//    }
 
     public static void main(String[] args) {
 
         ConfigLoader cl= new ConfigLoader();
-        Environment env = new Environment(1000,1000);
+        Environment env = new Environment(800,600);
 
         FleetState fleetState = new FleetState(0.05);
 

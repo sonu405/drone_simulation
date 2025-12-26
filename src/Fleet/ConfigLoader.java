@@ -45,22 +45,17 @@ public class ConfigLoader {
         // To move in z direction only from origin
         initialFormationCentre = new Vec3(0,0,0);
         finalFormationCentre = new Vec3(150,90,100);
-//        initialFormationCentre = new Vec3(0,0,10);
-//        finalFormationCentre = new Vec3(50,0,10);
         offsets = new Vec3[numOfDrones];
 
-        // one drone on x = 0, other on  x = 4
-//        offsets[0] = new Vec3(0,0,0);
-        offsets[0] = new Vec3(-50,0,0);
-        offsets[1] = new Vec3(-40,0,0);
-        offsets[2] = new Vec3(-30,0,0);
-        offsets[3] = new Vec3(-10,0,0);
-        offsets[4] = new Vec3(0,0,0);
-//        offsets[5] = new Vec3(2,0,0);
-//        offsets[6] = new Vec3(6,0,0);
-//        offsets[7] = new Vec3(10,0,0);
-//        offsets[8] = new Vec3(14,0,0);
-//        offsets[9] = new Vec3(18,0,0);
+        double radius = 50.0;  // Radius of the circle
+
+        // circle formation
+        for (int i = 0; i < numOfDrones; i++) {
+            double angle = 2 * Math.PI * i / numOfDrones;
+            double x = radius * Math.cos(angle);
+            double z = radius * Math.sin(angle);
+            offsets[i] = new Vec3(x, 0, z);
+        }
 
         // masses of drones
         droneMasses = new double[numOfDrones]; // 1 to 2.5 kg

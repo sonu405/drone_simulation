@@ -19,11 +19,6 @@ class Main {
 
         for (int i = 0; i < 5000 ; i++) {
             System.out.println("\n\n======= STEP " + i + " ========");
-//            try {
-//                Thread.sleep(1000);
-//            }catch (Exception e) {
-//                System.out.println(e.getMessage());
-//            }
             fleetState.notifyObervers();
         }
 

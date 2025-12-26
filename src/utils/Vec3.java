@@ -62,6 +62,9 @@ public class Vec3 {
 
         return new Vec3(newX, newY, newZ);
     }
+    public double dot(Vec3 other) {
+        return getX() * other.getX() + getY() * other.getY() + getZ() * other.getZ();
+    }
 
     public double getX() {
         return vec[0];

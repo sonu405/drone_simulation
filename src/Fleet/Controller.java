@@ -93,15 +93,8 @@ public class Controller {
         // worldRef
         Vec3 x_c;
         if (Math.abs(z_b.getZ()) > 0.99) {
-            // Thrust is nearly vertical - use x-axis as reference instead of yaw
-            // This ensures we have a horizontal reference
             x_c = new Vec3(1, 0, 0);  // Point north
-
-            // Alternative: maintain current body x-direction projected to horizontal
-            // Vector3D current_x = R_current.getColumn(0);
-            // x_c = new Vector3D(current_x.x, current_x.y, 0).normalize();
         } else {
-            // Normal case - use yaw from velocity or target
             x_c = new Vec3(Math.cos(d.getYaw()), Math.sin(d.getYaw()), 0);
         }
 
